@@ -291,6 +291,8 @@ def analisar_tabela_salarial(dados):
                "url": dados.get("url_fonte_piso", ""), "ano": dados.get("ano")}
     if ref.get("tipo") not in {"pspn", "piso_profissional", "consultoria", "cenario"}:
         raise ValueError("Selecione PSPN, piso profissional, consultoria ou cenário.")
+    if ref.get("tipo") == "pspn" and dados.get("pspn_inaplicavel"):
+        raise ValueError("Esta tabela exige referência própria; PSPN da educação básica não se aplica automaticamente a componentes de remuneração ou magistério superior.")
     if ref.get("tipo") == "pspn" and not any(x in profissao.casefold() for x in ("professor", "magist")):
         raise ValueError("O PSPN não pode ser aplicado a esta profissão.")
     if not str(ref.get("nome", "")).strip() or not str(ref.get("fonte", "")).strip():

@@ -1,3 +1,11 @@
+## 0.10.0 — 2026-10-06
+- Implementa processadores de documentos por formato e normalização com SHA-256/método/localização.
+- Prioriza tabelas nativas em PDF e tenta OCR em páginas híbridas quando a tabela não é reconhecida.
+- Separa VB e totais de titulação; bloqueia PSPN em componentes incompatíveis.
+- Mantém modelo do Excel e acrescenta rastreabilidade nas fontes.
+- Limitação confirmada: PDF escaneado do reajuste de 5,17% não gera tabela confiável.
+- Não implementa cruzamento automático de relatório fiscal enviado com TCE nem IA externa.
+
 # 0.9.0
 
 - Leitor geral por estrutura: matrizes, transpostas, registros e listas de cargos, sem dependência do nome do município.

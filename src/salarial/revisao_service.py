@@ -14,6 +14,7 @@ from src.salarial.documento_service import importar_tabela_salarial, _numero_bra
 from src.salarial.analise_service import _decimal
 from src.salarial.tabelas_coordenadas import extrair_pdf, extrair_html
 from src.salarial.leitor_geral import ler_matrizes
+from src.document_processor.table_processor import ler_tabelas
 from src.salarial.formatos_gerais import ler_pdf,ler_word,ler_xls,ler_imagem
 
 
@@ -104,29 +105,24 @@ def organizar_matriz(table,nome):
     return None
 
 
-def extrair_para_revisao(nome,conteudo):
+def _extrair_para_revisao(nome,conteudo):
     if not conteudo or len(conteudo)>16*1024*1024:raise ValueError('Envie um arquivo não vazio de até 16 MB.')
     ext=Path(nome).suffix.lower(); candidates=[];text='';pendencias=[]
     if ext=='.json':
         obj=json.loads(conteudo.decode('utf-8-sig'))
         if isinstance(obj,dict) and 'niveis' in obj:candidates=[obj]
-        else:candidates=organizar_registros(obj,nome)
+        elif isinstance(obj,list) and all(isinstance(row,dict) for row in obj):candidates=organizar_registros(obj,nome)
+        else:raise ValueError('JSON deve conter uma tabela salarial ou uma lista de registros; relatório fiscal genérico não é reconhecido por este leitor.')
     elif ext in {'.csv','.tsv','.xlsx','.xls','.html','.htm'}:
         tables=[]
         if ext in {'.csv','.tsv'}:
-            try:text=conteudo.decode('utf-8-sig')
-            except UnicodeDecodeError:text=conteudo.decode('cp1252')
-            try:dialect=csv.Sniffer().sniff(text[:8192],delimiters=';,\t')
-            except csv.Error:dialect=csv.excel_tab if ext=='.tsv' else csv.excel
-            tables=[list(csv.reader(StringIO(text),dialect))]
+            from src.document_processor.csv_processor import extrair_csv
+            tables,text=extrair_csv(conteudo,ext=='.tsv')
         elif ext=='.xls':
             tables=ler_xls(conteudo)
         elif ext=='.xlsx':
-            wb=load_workbook(BytesIO(conteudo),read_only=True,data_only=True)
-            for ws in wb:
-                if ws.max_row>20000 or ws.max_column>220:raise ValueError('Planilha extensa: exporte somente a tabela selecionada.')
-                tables.append(list(ws.values))
-            wb.close()
+            from src.document_processor.xlsx_processor import extrair_xlsx
+            tables=extrair_xlsx(conteudo)
         else:
             candidates,notes=extrair_html(nome,conteudo,organizar_registros);pendencias.extend(notes)
             parser=TabelasHTML();parser.feed(conteudo.decode('utf-8',errors='replace'));tables=[] if candidates else parser.tables
@@ -134,7 +130,7 @@ def extrair_para_revisao(nome,conteudo):
         for i,table in enumerate(tables,1):
             if not table:continue
             contexto='\n'.join(' '.join(str(c or '') for c in row) for row in table[:5])
-            gerais,notas=ler_matrizes([table],nome,organizar_registros,contexto)
+            gerais,notas=ler_tabelas([table],nome,organizar_registros,contexto)
             if gerais:
                 candidates.extend(gerais);continue
             if notas:
@@ -181,3 +177,8 @@ def extrair_para_revisao(nome,conteudo):
 def _pdf_pagina(reader,index):
     from pypdf import PdfWriter
     writer=PdfWriter();writer.add_page(reader.pages[index]);out=BytesIO();writer.write(out);return out.getvalue()
+
+
+def extrair_para_revisao(nome, conteudo):
+    from src.document_processor import processar_documento
+    return processar_documento(nome, conteudo)

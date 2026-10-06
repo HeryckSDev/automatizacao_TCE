@@ -168,6 +168,7 @@ function mostrarCandidato(){
   const lido=partes.length?`Identificado no arquivo: ${partes.join(' · ')}`:'A tabela foi lida. Complete apenas as informações que não apareceram no documento.';
   el('dados-encontrados').textContent=[escolhida,lido].filter(Boolean).join('\n');
   el('definir-comparacao').hidden=Boolean(dados.referencia||dados.piso_nacional_40h);
+  el('comparacao-tipo').querySelector('option[value="pspn"]').disabled=Boolean(dados.pspn_inaplicavel);
   el('comparacao-tipo').value='';el('comparacao-valor').value='';ajustarComparacao();
   el('conferir-recorte').hidden=!preparacao.requer_conferencia_recorte;el('recorte-confirmado').required=Boolean(preparacao.requer_conferencia_recorte);el('recorte-confirmado').checked=false;
   const tabela=document.createElement('table'),cabecalho=tabela.createTHead().insertRow();
@@ -189,7 +190,7 @@ el('salarios-arquivo').addEventListener('change',async()=>{
     el('filtro-candidato').value='';el('filtro-candidato-campo').hidden=preparacao.candidatos.length<LIMITE_FILTRO;
     montarLista();
     el('escolha-candidato').hidden=preparacao.candidatos.length<2;
-    mensagem('salarios',preparacao.candidatos.length?'Tabela encontrada. Complete somente o que faltar e gere o Excel.':'Não conseguimos identificar uma tabela completa. Abra a revisão detalhada para montar ou corrigir a tabela; também pode enviar Excel/CSV.',!preparacao.candidatos.length);
+    mensagem('salarios',preparacao.candidatos.length?'Tabela encontrada. Complete somente o que faltar e gere o Excel.':((preparacao.pendencias||[]).some(p=>p.includes('OCR aplicado'))?'O texto foi lido por OCR, mas a tabela não ficou confiável. Envie Excel/CSV ou confira na revisão detalhada.':'Não conseguimos identificar uma tabela completa. Abra a revisão detalhada para montar ou corrigir a tabela; também pode enviar Excel/CSV.'),!preparacao.candidatos.length);
   }catch(erro){parar();mensagem('salarios',erro.message,true);}finally{ocupar('salarios',false);if(preparacao?.candidatos.length)mostrarCandidato();else el('gerar-salarios').disabled=true;}
 });
 function complementos(){const dados={};for(const container of document.querySelectorAll('[data-complemento]'))if(!container.hidden)dados[container.dataset.complemento]=container.querySelector('input').value.trim();return dados;}
