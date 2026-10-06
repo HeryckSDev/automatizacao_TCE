@@ -1,0 +1,2 @@
+"""Regras e indicadores calculados."""
+

@@ -1,0 +1,2 @@
+"""Comunicação com fontes externas."""
+

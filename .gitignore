@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Front-end
+node_modules/
+dist/
+build/
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+
+# Arquivos gerados
+output/*
+!output/README.md
+
+# Dados locais
+data/raw/*
+!data/raw/README.md
+data/processed/*
+!data/processed/README.md
+!data/processed/amostra_curitiba_2019_2025.json
+!data/processed/cafezal_do_sul_2026.json

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Análise Municipal — Gerar Excel</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/simples.css') }}">
+  <script src="{{ url_for('static', filename='js/simples.js') }}" defer></script>
+</head>
+<body>
+  <header><a class="marca" href="/" aria-label="Análise Municipal"><span>AM</span><strong>Análise Municipal</strong></a><small>Jornada de Aprendizagem · 0.9.0</small></header>
+  <main>
+    <div class="introducao"><p class="etiqueta">Da consulta à planilha</p><h1>Seu Excel, pronto.</h1><p>Escolha o que precisa. O sistema busca os dados e organiza a planilha.</p></div>
+    <nav class="abas" aria-label="Escolha a análise" role="tablist"><button type="button" role="tab" aria-selected="true" aria-controls="painel-financeiro" id="aba-financeiro">Contas do município</button><button type="button" role="tab" aria-selected="false" aria-controls="painel-salarios" id="aba-salarios">Comparar salários</button></nav>
+
+    <section id="painel-financeiro" role="tabpanel" aria-labelledby="aba-financeiro">
+      <form id="form-financeiro" class="cartao">
+        <h2>De qual município você precisa?</h2>
+        <p class="apoio">A prefeitura e os relatórios são identificados automaticamente.</p>
+        <label for="financeiro-municipio">Município</label><input id="financeiro-municipio" list="lista-municipios" autocomplete="off" placeholder="Digite o nome do município" required disabled><datalist id="lista-municipios"></datalist>
+        <label for="financeiro-periodo">Período</label><select id="financeiro-periodo"><option value="historico">Histórico disponível</option><option value="ultimo">Último ano disponível</option><option value="intervalo">Escolher os anos</option></select>
+        <div id="financeiro-intervalo" class="dupla" hidden><div><label for="financeiro-inicio">De</label><input id="financeiro-inicio" type="number" min="2019" max="{{ ultimo_fechado }}" value="2019"></div><div><label for="financeiro-fim">Até</label><input id="financeiro-fim" type="number" min="2019" max="{{ ultimo_fechado }}" value="{{ ultimo_fechado }}"></div></div>
+        <button class="principal" id="gerar-financeiro" type="submit" disabled>Gerar Excel</button>
+        <div class="progresso" id="progresso-financeiro" hidden><div class="barra" aria-hidden="true"><span></span></div><span class="tempo" id="tempo-financeiro" aria-hidden="true"></span></div>
+        <p class="mensagem" id="financeiro-mensagem" role="status" aria-live="polite">Carregando municípios…</p>
+        <button class="texto" type="button" id="repetir-municipios" hidden>Tentar novamente</button>
+        <p class="nota">O histórico pode levar alguns minutos. O arquivo será baixado quando estiver pronto.</p>
+      </form>
+      <button class="exemplo" id="exemplo-financeiro" type="button">Ver exemplo pronto de Curitiba · 2019–2025</button>
+      <section id="resultado-financeiro" class="resultado" hidden aria-live="polite"></section>
+    </section>
+
+    <section id="painel-salarios" role="tabpanel" aria-labelledby="aba-salarios" hidden>
+      <form id="form-salarios" class="cartao">
+        <h2>Qual tabela deseja comparar?</h2>
+        <div id="tabela-salva">
+          <label for="salarios-tabela">Município e profissão</label><select id="salarios-tabela" disabled><option value="">Carregando tabelas…</option></select>
+          <p id="salarios-descricao" class="referencia"></p>
+          <button class="texto" id="usar-documento" type="button">Usar outro documento</button>
+        </div>
+        <div id="nova-tabela" hidden>
+          <button class="texto" id="usar-tabela-salva" type="button">Voltar às tabelas preparadas</button>
+          <label for="salarios-arquivo">Documento com os salários</label><input id="salarios-arquivo" type="file" accept=".pdf,.doc,.docx,.xlsx,.xls,.csv,.tsv,.html,.htm,.json,.png,.jpg,.jpeg">
+          <p class="nota">Envie PDF, Word ou planilha. A leitura começa assim que você escolhe o arquivo.</p>
+          <div id="preparacao-tabela" hidden>
+            <div id="escolha-candidato" hidden>
+              <label for="salarios-candidato" id="rotulo-candidato">Encontramos mais de uma tabela. Qual você quer?</label>
+              <div id="filtro-candidato-campo" hidden><input id="filtro-candidato" type="search" aria-label="Filtrar as tabelas encontradas" autocomplete="off" placeholder="Filtrar por nome ou anexo (ex.: M13, Superior, especial)" aria-describedby="contagem-candidato"></div>
+              <select id="salarios-candidato"></select>
+              <p class="nota" id="contagem-candidato" role="status" aria-live="polite"></p>
+            </div>
+            <p id="dados-encontrados" class="referencia"></p>
+            <div id="campos-a-completar" class="dupla">
+              <div data-complemento="municipio"><label for="complemento-municipio">Qual município?</label><input id="complemento-municipio"></div>
+              <div data-complemento="profissao"><label for="complemento-profissao">Qual profissão ou cargo?</label><input id="complemento-profissao"></div>
+              <div data-complemento="ano"><label for="complemento-ano">De qual ano é a tabela?</label><input id="complemento-ano" type="number" min="2000" max="2100"></div>
+              <div data-complemento="jornada_semanal"><label for="complemento-jornada_semanal">Quantas horas por semana?</label><input id="complemento-jornada_semanal" type="number" min="1" max="60" step="0.5"></div>
+            </div>
+            <div id="definir-comparacao">
+              <label for="comparacao-tipo">Como você quer comparar?</label><select id="comparacao-tipo"><option value="">Escolha a referência</option><option value="percentual">Simular um reajuste em %</option><option value="valor">Usar um valor inicial de referência</option><option value="pspn">Piso dos professores da educação básica · 2026</option></select>
+              <p class="nota" id="ajuda-comparacao">Professores: use o piso nacional. Outros cargos: simule um reajuste ou informe um valor inicial.</p>
+              <div id="comparacao-valor-campo" hidden><label for="comparacao-valor" id="comparacao-valor-rotulo">Reajuste desejado (%)</label><input id="comparacao-valor" type="number" min="0" step="0.01"></div>
+            </div>
+            <label class="confirmacao" id="conferir-recorte" hidden><input type="checkbox" id="recorte-confirmado"><span>O documento contém outras páginas ou tabelas. Confirmei que a tabela escolhida reúne todas as classes e níveis desta profissão.</span></label>
+            <details id="detalhes-leitura"><summary>Conferir os dados lidos</summary><div class="rolagem" id="preview-tabela"></div><p id="avisos-leitura" class="nota"></p><a href="/avancado#salarios" id="revisar-detalhes">Corrigir a tabela na revisão detalhada</a></details>
+          </div>
+        </div>
+        <button class="principal" id="gerar-salarios" type="submit" disabled>Gerar Excel</button>
+        <div class="progresso" id="progresso-salarios" hidden><div class="barra" aria-hidden="true"><span></span></div><span class="tempo" id="tempo-salarios" aria-hidden="true"></span></div>
+        <p class="mensagem" id="salarios-mensagem" role="status" aria-live="polite"></p>
+        <p class="nota">Depois de preparada, a tabela fica disponível para as próximas consultas. O Excel mantém o modelo do professor.</p>
+      </form>
+      <section id="resultado-salarios" class="resultado" hidden aria-live="polite"></section>
+    </section>
+    <footer><a href="/avancado">Revisão detalhada e fontes</a><span>Engenharia de Software · UniSenai PR</span></footer>
+  </main>
+</body>
+</html>

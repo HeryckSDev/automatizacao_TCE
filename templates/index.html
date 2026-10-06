@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <title>Análise Financeira e Salarial Municipal</title>
+  <meta name="description" content="Sistema acadêmico para análise financeira e comparação salarial por profissão municipal.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Ir para o início">
+      <span class="brand-mark">AM</span>
+      <span><strong>Análise Municipal</strong><small>Jornada de Aprendizagem</small></span>
+    </a>
+    <span class="project-status"><i></i>MVP 0.9.0 · comparação por profissão</span>
+  </header>
+
+  <main id="inicio">
+    <p class="section-copy"><a href="/">Voltar para a geração automática</a></p>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Engenharia de Software · UniSenai PR</p>
+        <h1>Dados públicos transformados em uma análise verificável.</h1>
+        <p class="hero-copy">Consulte as contas públicas, compare vencimentos por profissão com a referência aplicável e exporte as evidências para Excel e PDF.</p>
+      </div>
+      <aside class="hero-note">
+        <span>Escopo confirmado</span>
+        <strong>Curitiba é a demonstração, não o limite</strong>
+        <p>A consulta ao vivo aceita os municípios publicados pelo TCE-PR. Curitiba/2019–2025 é a amostra financeira preservada; Cafezal do Sul/2026 é a amostra salarial recebida.</p>
+      </aside>
+    </section>
+
+    <section class="workspace" aria-label="Área de análise financeira">
+      <form id="form-analise" class="filters-card">
+        <div class="section-heading">
+          <span class="step">01</span>
+          <div><p class="overline">Módulo financeiro</p><h2>Escolha a análise</h2></div>
+        </div>
+
+        <div class="source-guide">
+          <p><strong>Consulta real:</strong> município, entidade e período vêm do TCE-PR e exigem internet.</p>
+          <p><strong>Demo offline:</strong> Curitiba, exercícios de 2019 a 2025.</p>
+        </div>
+
+        <fieldset class="mode-switch">
+          <legend>Tipo de análise</legend>
+          <label><input type="radio" name="modo" value="anual"><span>Um exercício</span></label>
+          <label><input type="radio" name="modo" value="historico" checked><span>Histórico</span></label>
+        </fieldset>
+
+        <label for="municipio">Município</label>
+        <select id="municipio" name="municipio" required disabled>
+          <option value="">Carregando municípios do TCE-PR…</option>
+        </select>
+
+        <label for="entidade">Entidade</label>
+        <select id="entidade" name="entidade" required disabled>
+          <option value="">Aguardando município…</option>
+        </select>
+
+        <div id="campo-ano-anual">
+          <label for="ano">Exercício fechado</label>
+          <select id="ano" name="ano" required>
+            {% for ano in range(2025, 2018, -1) %}
+              <option value="{{ ano }}" {% if ano == 2025 %}selected{% endif %}>{{ ano }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div id="campos-historico" class="year-range" hidden>
+          <div><label for="ano-inicial">De</label><select id="ano-inicial" name="ano_inicial"></select></div>
+          <div><label for="ano-final">Até</label><select id="ano-final" name="ano_final"></select></div>
+        </div>
+
+        <label class="check-row">
+          <input id="incluir-fundeb" type="checkbox" checked>
+          <span>Incluir relatório MDE/FUNDEB</span>
+        </label>
+
+        <div id="status-fonte-tce" class="source-status" data-estado="carregando" role="status" aria-live="polite">Conectando ao catálogo do TCE-PR…</div>
+        <button class="retry-button" id="botao-recarregar-tce" type="button" hidden>Tentar carregar o TCE-PR novamente</button>
+
+        <button class="primary-button" id="botao-analisar" type="submit" disabled>Consultar histórico no TCE-PR</button>
+        <button class="ghost-button" id="botao-amostra" type="button">Abrir demo Curitiba 2019–2025</button>
+
+        <p id="tempo-estimado" class="helper-text">A consulta anual gera três relatórios e normalmente leva menos de um minuto.</p>
+        <div id="mensagem-form" class="form-message" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="results-column">
+        <div class="results-heading">
+          <div class="section-heading">
+            <span class="step">02</span>
+            <div><p class="overline">Resultado</p><h2 id="titulo-resultado">Resumo financeiro</h2></div>
+          </div>
+          <button class="secondary-button" id="botao-exportar" type="button" disabled>Baixar Excel</button>
+        </div>
+
+        <section id="estado-inicial" class="empty-card">
+          <span>→</span>
+          <div><strong>Dois caminhos, sem misturar as fontes</strong><p>Consulte qualquer município disponível no TCE-PR ou abra a demonstração preservada de Curitiba.</p></div>
+        </section>
+
+        <section id="carregamento" class="loading-card" hidden>
+          <span class="loader"></span>
+          <div><strong id="carregamento-titulo">Coletando relatórios oficiais</strong><p id="carregamento-texto">O portal processa cada relatório separadamente.</p></div>
+        </section>
+
+        <section id="resultado-anual" hidden>
+          <div class="result-meta"><span id="resultado-identificacao"></span><span id="resultado-origem" class="result-origin"></span><span id="resultado-coleta"></span></div>
+
+          <div class="metrics-grid">
+            <article class="metric-card featured"><p>Receita Corrente Líquida</p><strong id="valor-rcl">—</strong><span>Valor publicado no RGF</span></article>
+            <article class="metric-card"><p>RCL ajustada</p><strong id="valor-rcl-ajustada">—</strong><span>Base do comprometimento</span></article>
+            <article class="metric-card"><p>Despesa Total com Pessoal</p><strong id="valor-dtp">—</strong><span>Resumo anual do RGF</span></article>
+            <article class="metric-card status-card"><p>Comprometimento oficial</p><strong id="valor-percentual">—</strong><span id="classificacao" class="status-pill">—</span></article>
+            <article class="metric-card"><p>Receitas recebidas do FUNDEB</p><strong id="valor-fundeb">—</strong><span>Relatório MDE · 6º bimestre</span></article>
+            <article class="metric-card"><p>Resultado líquido FUNDEB</p><strong id="valor-fundeb-liquido">—</strong><span>Transferências recebidas menos destinadas</span></article>
+          </div>
+
+          <article class="limits-card">
+            <p class="overline">Faixas extraídas do relatório</p>
+            <h3>Posição do município</h3>
+            <div class="scale">
+              <div class="scale-track"><span id="current-marker" class="current-marker"><b id="marker-label">—</b></span></div>
+              <div class="scale-labels"><span>0%</span><span id="limite-alerta">Alerta</span><span id="limite-prudencial">Prudencial</span><span id="limite-maximo">Máximo</span><span>60%</span></div>
+            </div>
+          </article>
+
+          <article class="trace-card">
+            <div><p class="overline">Rastreabilidade</p><h3>Fontes e validação</h3></div>
+            <dl>
+              <div><dt>Receita</dt><dd id="fonte-receita">—</dd></div>
+              <div><dt>Pessoal</dt><dd id="fonte-pessoal">—</dd></div>
+              <div><dt>FUNDEB</dt><dd id="fonte-fundeb">—</dd></div>
+              <div><dt>Conferência entre relatórios</dt><dd id="validacao-rcl">—</dd></div>
+            </dl>
+          </article>
+          <div id="avisos-anual" class="notice-list" hidden></div>
+        </section>
+
+        <section id="resultado-historico" hidden>
+          <div class="result-meta"><span id="historico-identificacao"></span><span id="historico-origem" class="result-origin"></span><span id="historico-coleta"></span></div>
+          <div class="summary-grid">
+            <article><p>Evolução da RCL ajustada</p><strong id="evolucao-rcl">—</strong></article>
+            <article><p>Evolução da despesa</p><strong id="evolucao-despesa">—</strong></article>
+            <article><p>Evolução do FUNDEB</p><strong id="evolucao-fundeb">—</strong></article>
+            <article><p>Maior comprometimento</p><strong id="maior-comprometimento">—</strong></article>
+          </div>
+
+          <article class="chart-card">
+            <div><p class="overline">Série histórica</p><h3>RCL ajustada, despesa e FUNDEB</h3></div>
+            <div class="chart-legend"><span data-serie="rcl">RCL ajustada</span><span data-serie="despesa">Despesa</span><span data-serie="fundeb">FUNDEB</span></div>
+            <svg id="grafico-historico" viewBox="0 0 840 330" role="img" aria-label="Gráfico da evolução histórica"></svg>
+          </article>
+
+          <article class="table-card">
+            <div><p class="overline">Detalhamento</p><h3>Resultados por exercício</h3></div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Ano</th><th>RCL ajustada</th><th>Despesa</th><th>FUNDEB</th><th>Comprometimento</th><th>Situação</th><th>Δ despesa</th></tr></thead>
+                <tbody id="tabela-historico"></tbody>
+              </table>
+            </div>
+          </article>
+          <div id="avisos-historico" class="notice-list" hidden></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="salary-section" id="salarios">
+      <div class="section-heading"><span class="step">03</span><div><p class="overline">Módulo salarial</p><h2>Comparação salarial por profissão</h2></div></div>
+      <p class="section-copy">Cafezal do Sul define o formato desejado do resultado, não a origem dos demais municípios. Como não existe uma API salarial municipal única, a primeira etapa é reunir e preservar o dossiê oficial: tabela vigente, plano de carreira e ato de reajuste.</p>
+
+      <div class="salary-acquisition-grid">
+        <article class="salary-source-card">
+          <span class="upload-tag">Etapa A · localizar</span>
+          <h3>Pontos de partida oficiais</h3>
+          <p>O catálogo reúne seis exemplos iniciais, seguindo a quantidade sugerida pelo professor. Ele não limita o sistema: escolha “outro município” quando necessário.</p>
+          <label for="dossie-fonte-catalogo">Município pesquisado</label>
+          <select id="dossie-fonte-catalogo" disabled>
+            <option value="">Carregando fontes…</option>
+          </select>
+          <div id="dossie-fonte-detalhes" class="source-detail" role="status" aria-live="polite">
+            Selecione uma fonte para ver onde procurar e o que baixar.
+          </div>
+          <a id="dossie-fonte-link" class="secondary-button source-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Abrir página oficial</a>
+        </article>
+
+        <form id="form-dossie-salarial" class="salary-dossier-card">
+          <span class="upload-tag">Etapa A · registrar</span>
+          <h3>Dossiê municipal bruto</h3>
+          <p>Os arquivos ficam preservados com URL, data, categoria e SHA-256. Nenhum salário é interpretado nesta etapa.</p>
+          <div class="dossier-meta-grid">
+            <div><label for="dossie-municipio">Município</label><input id="dossie-municipio" name="municipio" placeholder="Ex.: Londrina" required></div>
+            <div><label for="dossie-uf">UF</label><input id="dossie-uf" name="uf" value="PR" minlength="2" maxlength="2" required></div>
+            <div><label for="dossie-ano">Ano/competência</label><input id="dossie-ano" name="ano_referencia" type="number" value="2026" min="2000" max="2100" required></div>
+            <div><label for="dossie-tipo-fonte">Tipo de fonte</label><select id="dossie-tipo-fonte" name="tipo_fonte" required><option value="portal_prefeitura">Portal da prefeitura</option><option value="diario_oficial">Diário oficial</option><option value="outro_oficial">Outra fonte oficial</option></select></div>
+          </div>
+          <label for="dossie-fonte-url">URL onde o documento foi encontrado</label>
+          <input id="dossie-fonte-url" name="fonte_url" type="url" placeholder="https://..." required>
+          <div class="dossier-files-grid">
+            <label for="dossie-tabela"><strong>1. Tabela vigente *</strong><span>Matriz, lista ou anexo com vencimentos</span><input id="dossie-tabela" name="tabela_vigente" type="file" accept=".pdf,.doc,.docx,.xlsx,.xls,.xls,.csv,.html,.htm" required></label>
+            <label for="dossie-plano"><strong>2. Plano de carreira</strong><span>Lei ou estatuto que explica níveis/classes</span><input id="dossie-plano" name="plano_carreira" type="file" accept=".pdf,.doc,.docx,.xlsx,.xls,.xls,.html,.htm"></label>
+            <label for="dossie-reajuste"><strong>3. Ato de reajuste</strong><span>Lei, decreto ou portaria da vigência</span><input id="dossie-reajuste" name="ato_reajuste" type="file" accept=".pdf,.doc,.docx,.html,.htm"></label>
+          </div>
+          <label for="dossie-observacoes">Observações da coleta</label>
+          <textarea id="dossie-observacoes" name="observacoes" rows="3" maxlength="2000" placeholder="Ex.: arquivo localizado na seção Pessoal; confirmar jornada de 20h."></textarea>
+          <button class="primary-button" type="submit">Registrar documentos brutos</button>
+          <div id="dossie-resultado" class="dossier-result" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+
+      <aside class="salary-boundary-note"><strong>Limite desta etapa:</strong> registrar um arquivo não significa que ele esteja vigente nem que a carreira já foi entendida. Na revisão abaixo, confirme a competência, selecione a profissão ou cargo e confira classes, níveis, titulações, jornada e valores.</aside>
+
+      <div class="salary-workspace">
+        <div class="salary-controls-column">
+          <form id="form-salarial" class="salary-form">
+            <span class="upload-tag">Etapa B · referência da profissão</span>
+            <h3>Parâmetros da comparação</h3>
+            <label for="salario-municipio">Município</label>
+            <input id="salario-municipio" placeholder="Carregue o exemplo ou informe o município" required>
+            <div class="salary-field-grid">
+              <div><label for="salario-ano">Ano</label><input id="salario-ano" type="number" value="2026" min="2008" max="2100" required></div>
+              <div><label for="salario-jornada">Jornada semanal</label><input id="salario-jornada" type="number" value="20" min="1" max="60" step="0.5" required></div>
+            </div>
+            <label for="salario-profissao">Profissão / cargo</label><input id="salario-profissao" required placeholder="Selecione uma tabela ou informe o cargo">
+            <label for="salario-ref-tipo">Tipo de referência</label>
+            <select id="salario-ref-tipo"><option value="cenario">Cenário definido pela equipe</option><option value="consultoria">Referência da consultoria</option><option value="piso_profissional">Piso profissional informado</option><option value="pspn">PSPN — somente magistério</option></select>
+            <label for="salario-ref-nome">Nome da referência</label><input id="salario-ref-nome" required>
+            <label for="salario-piso">Valor da referência (R$)</label>
+            <input id="salario-piso" type="number" placeholder="Informe o valor" min="0.01" step="0.01" required>
+            <div class="salary-field-grid"><div><label for="salario-ref-jornada">Jornada da referência</label><input id="salario-ref-jornada" type="number" min="1" max="60" value="40" required></div><div><label for="salario-ref-ano">Ano da referência</label><input id="salario-ref-ano" type="number" value="2026" required></div></div>
+            <label class="salary-check"><input type="checkbox" id="salario-proporcional"> A referência admite proporcionalidade por jornada</label>
+            <label for="salario-ref-fonte">Fonte / justificativa da referência</label><textarea id="salario-ref-fonte" required rows="2"></textarea>
+            <label for="salario-ref-url">Link da referência</label><input id="salario-ref-url" type="url">
+            <label for="salario-lei">Lei / documento municipal</label><input id="salario-lei">
+            <label for="salario-tabela-url">Fonte da tabela municipal</label><input id="salario-tabela-url">
+            <label class="salary-check"><input type="checkbox" id="salario-jornada-confirmada"> Jornada conferida no documento</label>
+            <label for="salario-arredondamento">Tratamento dos centavos</label>
+            <select id="salario-arredondamento">
+              <option value="arredondar">Arredondamento comercial em cada etapa</option><option value="truncar">Truncar em cada etapa (exemplo Cafezal)</option>
+            </select>
+            <button id="botao-salario-amostra" class="primary-button" type="button">Ver exemplo de layout: Cafezal/2026</button>
+            <button id="botao-salario-curitiba" class="ghost-button" type="button">Exemplo: Administrativo · Curitiba/2026</button><button id="botao-salario-novo" class="ghost-button" type="button">Nova tabela por profissão</button>
+            <button id="botao-salario-analisar" class="ghost-button" type="submit" disabled>Recalcular referência</button>
+            <div id="salario-mensagem" class="form-message" role="status" aria-live="polite"></div>
+          </form>
+
+          <form id="form-importar-salarios" class="salary-import-card">
+            <span class="upload-tag">Etapa C · extrair e revisar</span>
+            <h3>Testar uma tabela já selecionada</h3>
+            <p>Use somente depois de registrar e conferir o dossiê. Planilhas/CSV/HTML usam o modelo longo por cargo, nível e classe. PDFs e Word passam por extração para revisão. DOC legado exige LibreOffice.</p>
+            <input id="arquivo-salario" name="arquivo" type="file" accept=".doc,.docx,.pdf,.xlsx,.xls,.csv,.tsv,.html,.htm,.json,.png,.jpg,.jpeg" required>
+            <button class="secondary-button" type="submit">Extrair para revisão</button>
+          <a href="/api/salarios/modelo-importacao">Baixar CSV para preencher os dados</a>
+          </form>
+        </div>
+
+        <div class="salary-results-column">
+          <button id="salario-criar-manual" type="button" class="secondary-button">Montar uma tabela na revisão</button>
+          <section id="salario-editor" class="table-card" hidden>
+            <h3>Revisar a tabela selecionada</h3>
+            <p>Confira cargo, jornada, classes e valores. As progressões podem ser editadas antes da comparação.</p>
+            <label for="salario-candidatos">Tabelas encontradas</label><select id="salario-candidatos" hidden></select>
+            <div id="salario-importacao-avisos" class="form-message"></div>
+            <details><summary>Texto extraído do documento</summary><pre id="salario-texto-extraido"></pre></details>
+            <div id="salario-grade" class="table-scroll"></div>
+            <div class="salary-editor-actions"><button id="salario-add-nivel" type="button">Adicionar nível</button><button id="salario-add-classe" type="button">Adicionar classe</button><button id="salario-rem-nivel" type="button">Remover último nível</button><button id="salario-rem-classe" type="button">Remover última classe</button></div>
+            <label class="salary-check"><input type="checkbox" id="salario-revisado"> Revisei a tabela e os parâmetros da comparação</label>
+          </section>
+          <section id="salario-estado-inicial" class="empty-card">
+            <span>→</span>
+            <div><strong>Carregue uma tabela para começar</strong><p>Use um exemplo, envie uma tabela ou inicie uma nova análise por profissão. O Excel seguirá as tabelas e cores do relatório do professor.</p></div>
+          </section>
+
+          <section id="resultado-salarial" hidden>
+            <div class="results-heading salary-result-heading">
+              <div><p class="overline">Resultado técnico</p><h3 id="salario-identificacao">—</h3></div>
+              <div class="salary-actions">
+                <button id="botao-salario-excel" class="secondary-button" type="button">Baixar Excel</button>
+                <button id="botao-salario-pdf" class="secondary-button" type="button">Baixar PDF</button>
+              </div>
+            </div>
+
+            <div class="salary-summary-grid">
+              <article><p>Situação</p><strong id="salario-situacao">—</strong></article>
+              <article><p>Inicial atual</p><strong id="salario-atual">—</strong></article>
+              <article><p>Referência</p><strong id="salario-referencia">—</strong></article>
+              <article><p>Defasagem inicial</p><strong id="salario-defasagem">—</strong></article>
+              <article><p>Abaixo da referência</p><strong id="salario-celulas">—</strong></article>
+              <article><p>Divergências estruturais</p><strong id="salario-divergencias">—</strong></article>
+            </div>
+
+            <article class="table-card salary-table-card">
+              <div><p class="overline">Documento municipal</p><h3>Tabela atual</h3></div>
+              <div id="tabela-salario-atual" class="table-scroll"></div>
+            </article>
+            <article class="table-card salary-table-card reference-table-card">
+              <div><p class="overline">Cálculo parametrizado</p><h3>Tabela de referência</h3></div>
+              <div id="tabela-salario-referencia" class="table-scroll"></div>
+            </article>
+            <article class="table-card salary-table-card difference-table-card">
+              <div><p class="overline">Atual menos referência</p><h3>Diferenças por classe</h3></div>
+              <div id="tabela-salario-diferencas" class="table-scroll"></div>
+            </article>
+            <div id="avisos-salariais" class="notice-list"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="materials-section" id="materiais">
+      <div class="section-heading"><span class="step">04</span><div><p class="overline">QA técnico</p><h2>Inspecionar os arquivos de origem</h2></div></div>
+      <p class="section-copy">Ferramentas auxiliares da equipe — não são um terceiro módulo do produto — para conferir se PDFs e planilhas possuem conteúdo processável antes da análise.</p>
+      <div class="materials-grid">
+        <form id="form-pdf" class="upload-card">
+          <span class="upload-tag">Módulo salarial</span>
+          <h3>Inspecionar tabela salarial em PDF</h3>
+          <p>Verifica páginas, texto extraível e se o documento parece escaneado.</p>
+          <input id="arquivo-pdf" name="arquivo" type="file" accept="application/pdf,.pdf" required>
+          <button type="submit" class="secondary-button">Inspecionar PDF</button>
+          <div id="resultado-pdf" class="inspection-result" role="status"></div>
+        </form>
+        <form id="form-planilha" class="upload-card">
+          <span class="upload-tag">Planilha original</span>
+          <h3>Mapear o Excel da consultoria</h3>
+          <p>Lista abas, dimensões e quantidade de fórmulas para orientar a próxima atualização.</p>
+          <input id="arquivo-planilha" name="arquivo" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx" required>
+          <button type="submit" class="secondary-button">Inspecionar planilha</button>
+          <div id="resultado-planilha" class="inspection-result" role="status"></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="learning-section">
+      <div class="section-heading"><span class="step">05</span><div><p class="overline">Documentação acadêmica</p><h2>Reescreva uma parte de cada vez</h2></div></div>
+      <div class="flow-grid">
+        <article><span>01</span><h3>Coleta</h3><p>Entenda postbacks, períodos e exportação CSV.</p></article>
+        <article><span>02</span><h3>Extração</h3><p>Localize indicadores por rótulo, não por posição fixa.</p></article>
+        <article><span>03</span><h3>Histórico</h3><p>Calcule evoluções sem esconder anos com erro.</p></article>
+        <article><span>04</span><h3>Salários</h3><p>Compare progressões sem esconder jornada ou centavos.</p></article>
+        <article><span>05</span><h3>Exportações</h3><p>Entregue Excel, PDF, fontes e pendências auditáveis.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>Engenharia de Software · UniSenai PR</p><p>Ferramenta de apoio: a interpretação e aprovação final permanecem humanas.</p></footer>
+<script src="{{ url_for('static', filename='js/salarios_editor.js') }}" defer></script>
+</body>
+</html>

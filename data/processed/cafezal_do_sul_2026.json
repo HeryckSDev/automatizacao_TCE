@@ -1,0 +1,119 @@
+{
+  "municipio": "Cafezal do Sul",
+  "uf": "PR",
+  "ano": 2026,
+  "lei": "Anexo A da LC 064/2026",
+  "arquivo_fonte": "ANEXO A - LC 064.2026 MAGIST.doc",
+  "jornada_semanal": 20,
+  "jornada_confirmada_no_documento": false,
+  "piso_nacional_40h": 5130.63,
+  "fonte_piso": "Lei Federal nº 15.437/2026",
+  "url_fonte_piso": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2026/lei/l15437.htm",
+  "modo_arredondamento": "truncar",
+  "progressao_classes_percentual": 2.0,
+  "progressoes_classes_percentuais": [
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0
+  ],
+  "progressao_classes_uniforme": true,
+  "progressao_classes_origem": "declarada",
+  "classes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "niveis": [
+    {
+      "codigo": "A",
+      "descricao": "Magistério",
+      "acrescimo_percentual": 0.0,
+      "regra_vertical": {
+        "tipo": "base",
+        "valor": 0.0,
+        "nivel_referencia": null
+      },
+      "valores": [
+        2565.31,
+        2616.61,
+        2668.94,
+        2722.31,
+        2776.75,
+        2832.28,
+        2888.92,
+        2946.69,
+        3005.62,
+        3065.73,
+        3127.04,
+        3189.58
+      ]
+    },
+    {
+      "codigo": "B",
+      "descricao": "Licenciatura Plena",
+      "acrescimo_percentual": 12.0,
+      "regra_vertical": {
+        "tipo": "percentual",
+        "valor": 12.0,
+        "nivel_referencia": "A"
+      },
+      "valores": [
+        2873.14,
+        2930.6,
+        2989.21,
+        3048.99,
+        3109.96,
+        3172.15,
+        3235.59,
+        3300.3,
+        3366.3,
+        3433.62,
+        3502.29,
+        3572.33
+      ]
+    },
+    {
+      "codigo": "C",
+      "descricao": "Especialização",
+      "acrescimo_percentual": 27.0,
+      "regra_vertical": {
+        "tipo": "percentual",
+        "valor": 27.0,
+        "nivel_referencia": "A"
+      },
+      "valores": [
+        3257.94,
+        3323.09,
+        3389.55,
+        3457.34,
+        3526.48,
+        3597.0,
+        3668.94,
+        3742.31,
+        3817.15,
+        3893.49,
+        3971.35,
+        4050.77
+      ]
+    }
+  ],
+  "profissao": "Professor/a",
+  "url_fonte_tabela": "Documento municipal enviado pelo professor: Anexo A da LC 064/2026"
+}

@@ -1,0 +1,274 @@
+{
+  "municipio_id": "1490",
+  "municipio": "Curitiba",
+  "entidade_id": "12268",
+  "entidade": "Município de Curitiba",
+  "ano_inicial": 2019,
+  "ano_final": 2025,
+  "resultados": [
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2019,
+      "receita_corrente_liquida": 7361430652.73,
+      "receita_corrente_liquida_ajustada": 7359872310.73,
+      "despesa_total_pessoal": 2786074714.14,
+      "percentual_oficial": 37.85,
+      "percentual_calculado": 37.8549,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 7361430652.73,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:11:03-03:00",
+      "fundeb": {
+        "receitas_recebidas": 600162934.45,
+        "resultado_liquido_transferencias": 275212940.29,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": null,
+        "despesa_pessoal_percentual": null,
+        "receitas_fundeb_percentual": null,
+        "comprometimento_pontos_percentuais": null
+      },
+      "avisos": []
+    },
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2020,
+      "receita_corrente_liquida": 7866853355.9,
+      "receita_corrente_liquida_ajustada": 7835897240.9,
+      "despesa_total_pessoal": 2884571613.07,
+      "percentual_oficial": 36.81,
+      "percentual_calculado": 36.8123,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 7866853355.9,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:11:31-03:00",
+      "fundeb": {
+        "receitas_recebidas": 572011470.93,
+        "resultado_liquido_transferencias": 254454213.64,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": 6.467842240632371,
+        "despesa_pessoal_percentual": 3.535328698476925,
+        "receitas_fundeb_percentual": -4.690636809452187,
+        "comprometimento_pontos_percentuais": -1.0426000000000002
+      },
+      "avisos": []
+    },
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2021,
+      "receita_corrente_liquida": 8289494820.45,
+      "receita_corrente_liquida_ajustada": 8282730694.45,
+      "despesa_total_pessoal": 3186380692.32,
+      "percentual_oficial": 38.47,
+      "percentual_calculado": 38.4702,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 8289494820.45,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:12:02-03:00",
+      "fundeb": {
+        "receitas_recebidas": 713790814.68,
+        "resultado_liquido_transferencias": 339905724.21,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": 5.702390419538972,
+        "despesa_pessoal_percentual": 10.462873512396165,
+        "receitas_fundeb_percentual": 24.786101495392955,
+        "comprometimento_pontos_percentuais": 1.657899999999998
+      },
+      "avisos": []
+    },
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2022,
+      "receita_corrente_liquida": 9335522195.42,
+      "receita_corrente_liquida_ajustada": 9314379936.42,
+      "despesa_total_pessoal": 3334993704.03,
+      "percentual_oficial": 35.8,
+      "percentual_calculado": 35.8048,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 9335522195.42,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:12:28-03:00",
+      "fundeb": {
+        "receitas_recebidas": 860918344.6,
+        "resultado_liquido_transferencias": 424451388.91,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": 12.455424183491527,
+        "despesa_pessoal_percentual": 4.664006785761532,
+        "receitas_fundeb_percentual": 20.612135501625772,
+        "comprometimento_pontos_percentuais": -2.665399999999998
+      },
+      "avisos": []
+    },
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2023,
+      "receita_corrente_liquida": 9967593104.79,
+      "receita_corrente_liquida_ajustada": 9935910243.97,
+      "despesa_total_pessoal": 4250070902.71,
+      "percentual_oficial": 42.77,
+      "percentual_calculado": 42.7749,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 9967593104.79,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:12:54-03:00",
+      "fundeb": {
+        "receitas_recebidas": 863804576.18,
+        "resultado_liquido_transferencias": 408889476.88,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": 6.672803898837798,
+        "despesa_pessoal_percentual": 27.43864846204125,
+        "receitas_fundeb_percentual": 0.33525032868719773,
+        "comprometimento_pontos_percentuais": 6.970100000000002
+      },
+      "avisos": []
+    },
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2024,
+      "receita_corrente_liquida": 11389418362.14,
+      "receita_corrente_liquida_ajustada": 11309265897.14,
+      "despesa_total_pessoal": 4685119821.38,
+      "percentual_oficial": 41.43,
+      "percentual_calculado": 41.4273,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 11389418362.14,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:13:30-03:00",
+      "fundeb": {
+        "receitas_recebidas": 1006315150.2,
+        "resultado_liquido_transferencias": 494682509.16,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": 13.822142304510798,
+        "despesa_pessoal_percentual": 10.236274373507449,
+        "receitas_fundeb_percentual": 16.49801100269972,
+        "comprometimento_pontos_percentuais": -1.3476
+      },
+      "avisos": []
+    },
+    {
+      "municipio_id": "1490",
+      "municipio": "Curitiba",
+      "entidade_id": "12268",
+      "entidade": "Município de Curitiba",
+      "ano": 2025,
+      "receita_corrente_liquida": 12392660007.87,
+      "receita_corrente_liquida_ajustada": 12336669938.27,
+      "despesa_total_pessoal": 4766555515.29,
+      "percentual_oficial": 38.64,
+      "percentual_calculado": 38.6373,
+      "classificacao": "normal",
+      "limites": {
+        "alerta": 48.6,
+        "prudencial": 51.3,
+        "maximo": 54.0
+      },
+      "rcl_relatorio_rreo": 12392660007.87,
+      "diferenca_validacao_rcl": 0.0,
+      "fonte_receita": "RREO - Demonstrativo da Receita Corrente Líquida",
+      "fonte_pessoal": "RGF - Demonstrativo da Despesa com Pessoal",
+      "coletado_em": "2026-08-15T19:14:01-03:00",
+      "fundeb": {
+        "receitas_recebidas": 1043518164.66,
+        "resultado_liquido_transferencias": 490221827.16,
+        "fonte": "RREO - Manutenção e Desenvolvimento do Ensino (MDE)",
+        "periodo": "6º Bimestre"
+      },
+      "evolucao": {
+        "rcl_ajustada_percentual": 9.084621853217033,
+        "despesa_pessoal_percentual": 1.7381774002529715,
+        "receitas_fundeb_percentual": 3.696954622277726,
+        "comprometimento_pontos_percentuais": -2.789999999999999
+      },
+      "avisos": []
+    }
+  ],
+  "erros": [],
+  "resumo": {
+    "anos_analisados": 7,
+    "anos_com_erro": 0,
+    "evolucao_acumulada_rcl_ajustada": 67.62070614029948,
+    "evolucao_acumulada_despesa_pessoal": 71.08498530561953,
+    "evolucao_acumulada_receitas_fundeb": 73.872477749113,
+    "media_comprometimento": 38.826,
+    "maior_comprometimento": 42.7749,
+    "ano_maior_comprometimento": 2023
+  },
+  "coletado_em": "2026-08-15T19:14:01-03:00"
+}

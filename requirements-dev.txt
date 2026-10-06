@@ -1,0 +1,2 @@
+# Somente para desenvolvimento e QA (não é necessário para usar o aplicativo)
+playwright==1.56.0
