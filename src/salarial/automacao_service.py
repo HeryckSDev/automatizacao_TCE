@@ -14,7 +14,7 @@ from src.salarial.analise_service import analisar_tabela_salarial, _decimal, _va
 from src.salarial.revisao_service import extrair_para_revisao
 
 
-VERSAO_EXTRACAO = "0.9.0"
+VERSAO_EXTRACAO = "0.10.0"
 
 
 def _moeda_br(valor):
@@ -215,6 +215,8 @@ class AutomacaoSalarial:
                     referencia = dict(tipo="consultoria", nome="Valor de referência informado", valor=float(_decimal(escolha.get("valor"), "Valor de referência")),
                                       fonte="Valor inicial informado pelo usuário para esta análise.")
                 elif tipo == "pspn":
+                    if dados.get("pspn_inaplicavel"):
+                        raise ValueError("Esta tabela separa componentes de remuneração; informe uma referência adequada, sem aplicar automaticamente o PSPN da educação básica.")
                     fonte = self.carregar("cafezal-2026")
                     if dados["ano"] != fonte["ano"]:
                         raise ValueError(f"O piso preparado é de {fonte['ano']}. Informe uma referência do ano da tabela.")

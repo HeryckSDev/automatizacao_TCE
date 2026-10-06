@@ -1,4 +1,4 @@
-# Análise Municipal — versão 0.9.0
+# Análise Municipal — versão 0.10.0
 
 Escolha o que precisa e clique em **Gerar Excel**. A tela inicial reúne a consulta e a entrega do arquivo na mesma ação.
 
@@ -61,7 +61,7 @@ Detalhes técnicos e históricos: `docs/20_guia_detalhado_v0.7.2.md`, `docs/21_a
 python -m unittest discover -s tests -v
 ```
 
-A suíte local possui 93 testes. A automação completa também consultou Cruzeiro do Sul e entregou o Excel de 2025 usando apenas município e período. A evidência está em `docs/evidencias/v0.8/`. O teste da interface usa DOM simulado; o instalador `.bat` ainda precisa de execução em um Windows real.
+A suíte completa local de desenvolvimento possui 168 testes na v0.10.0; alguns usam documentos de referência que não acompanham a publicação GitHub reduzida. A automação completa também consultou Cruzeiro do Sul e entregou o Excel de 2025 usando apenas município e período. A evidência está em `docs/evidencias/v0.8/`. O teste da interface usa DOM simulado; o instalador `.bat` ainda precisa de execução em um Windows real.
 
 
 ## Evolução 0.9.0
@@ -92,8 +92,8 @@ Abra http://127.0.0.1:5000.
 PDF, DOC/DOCX, XLS/XLSX, CSV/TSV, HTML e imagens PNG/JPG/JPEG. OCR e conversão DOC dependem de ferramentas opcionais. Leia [resultados e limitações](docs/28_leitor_geral_v0.9.0.md) antes de usar documentos escaneados.
 
 
-## Conteúdo publicado no GitHub
+## Pipeline de documentos — 0.10.0
 
-Este repositório contém o código da versão 0.9.0, interface, dependências, testes, scripts e amostras da aplicação. Documentos recebidos, PDFs salariais externos, evidências geradas e os diretórios `referencias/`, `docs/` e `skills/` não fazem parte desta publicação. As menções a esses arquivos acima descrevem o pacote completo, não arquivos disponíveis neste repositório.
+Leitores separados por formato, tabelas nativas antes do texto, OCR por página quando necessário e normalização com rastreabilidade. VB e totais por titulação ficam separados. O PDF escaneado de reajuste de 5,17% ainda precisa transcrição/revisão: a versão não reconhece qualquer layout. Confira [implementação e limites](docs/29_pipeline_documentos_v0.10.0.md).
 
-Alguns testes de integração precisam dos documentos de referência ausentes. Os 155 testes aprovados anteriormente se referem ao pacote completo; a suíte não foi executada novamente nesta publicação reduzida. O leitor reconhece estruturas suportadas e não garante leitura de qualquer tabela municipal.
+A publicação no GitHub contém código, interface, testes, dependências e amostras. PDFs/arquivos recebidos, fontes externas, documentação histórica, skills e evidências brutas do pacote completo não foram publicados. Testes que usam essas referências exigem arquivos locais; o total de testes documentado refere-se ao pacote completo de desenvolvimento.

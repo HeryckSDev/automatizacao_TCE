@@ -195,6 +195,11 @@ def criar_modelo(analise):
            ("Uso da referência",ref['tipo']+": "+ref['nome']),
            ("Cores de alerta","Vermelho na tabela atual: vencimento abaixo da base de referência. Diferenças da carreira: atual menos referência."),
            ("Edição posterior","Ajuste valores, modo e progressões em Parâmetros/Dados originais. Mudança de fonte, profissão, vigência ou quantidade de classes: regenere pelo sistema.")]
+    origem = a.get("entrada", {}).get("rastreabilidade") or {}
+    if origem:
+        notes += [("SHA-256 do documento", origem.get("sha256", "")),
+                  ("Método de leitura", origem.get("metodo", "")),
+                  ("Localização no original", origem.get("localizacao", ""))]
     notes += [("Observação ao gerar",v) for v in a['avisos']]
     for r,(label,value) in enumerate(notes,3):
         cell(sources,r,1,label);cell(sources,r,2,value);sources['heights'][str(r)]=48

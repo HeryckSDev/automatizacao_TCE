@@ -95,7 +95,7 @@ class AppTestCase(unittest.TestCase):
 
     def test_interface_separa_consulta_real_da_demo(self):
         resposta = self.client.get("/avancado")
-        self.assertIn(b"MVP 0.9.0", resposta.data)
+        self.assertIn(b"MVP 0.10.0", resposta.data)
         self.assertIn("Curitiba é a demonstração, não o limite".encode(), resposta.data)
         self.assertIn(b"Consulta real:", resposta.data)
         self.assertIn(b"Demo offline:", resposta.data)
